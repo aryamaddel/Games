@@ -1,45 +1,59 @@
+import string
 from random import choice
-from re import A
 
 from Assets.words import words
 
 
 def get_valid_word():
     word = choice(words)
-    while ('-' or ' ') in word:
+    while (" " or "-") in word:
         word = choice(words)
-    return word
+    return word.upper()
 
 
 def hangman(word):
-    # # TEST!!!!!!!!!!!!!! LINE!!!!!!!!!!!!!!
-    # print(word)
-    # # TEST!!!!!!!!!!!!!! LINE!!!!!!!!!!!!!!
+    print(word)
+    lives = 6
+    word_letters = set(word)
 
-    print("\nGuess the word. Type one letter at a time.\n")
-    print(f"The word is {len(word)} letters long\n")
-    print("You have 6 chances\n")
+    alphabet = set(string.ascii_uppercase)
 
-    answer = ['_' for i in range(len(word))]
-    print(*answer)
-    for i in range(6):
-        alphabet = input(": ")
+    used_letters = set()
 
-        if alphabet in word:
-            for index in range(len(word)):
-                if word[index] == alphabet:
-                    answer[index] = alphabet
-            print(*answer)
-            if answer == list(word):
-                print("You Won")
-                break
+    while len(word_letters) > 0 and lives>0:
+        print("You have used:", " ".join(used_letters), '\n')
+        word_list = [
+            letter if letter in used_letters else "_" for letter in word]
+        print('Current word: ', ' '.join(word_list))
 
-        else:
-            if i < 4:
-                print("\nAlphabet not present in word Try Again")
+        # Getting user input
+        user_letter = input("\nEnter : ").upper()
+        print("")
 
+        # IF entered letter is available to guess or been already guessed or wrong character
+        if user_letter in alphabet - used_letters:
+            used_letters.add(user_letter)
+
+            # IF entered letter is present in the CORRECT word 
+            if user_letter in word_letters:
+                word_letters.remove(user_letter)
             else:
-                print("\nAlphabet not present in word last chance")
+                print("Letter not present in the word Try again")
+                lives -= 1
+                print(f"\nYou have {lives} left\n")
+
+        # Letter repetion
+        elif user_letter in used_letters:
+            print("\nYou already guessed that word Try again\n")
+        else:
+            print("\nYou typed something wrong type again\n")
+    
+    if lives == 0:
+        print("\nYou Died\n")
+        print(f"\nThe Word was {word}\n")
+    else:
+        print("\nYou won\n")
+        print(f"\nThe Word was {word}\n")
 
 
 hangman(get_valid_word())
