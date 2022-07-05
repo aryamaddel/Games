@@ -12,7 +12,6 @@ def get_valid_word():
 
 
 def hangman(word):
-    print(word)
     lives = 6
     word_letters = set(word)
 
